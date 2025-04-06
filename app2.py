@@ -12,18 +12,17 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Global variable to store the model
 model = None
-df=pd.read_csv("filtered_dataset.csv")
-print(df.columns)
+
 # Load the model only once when the application starts
 def load_model():
     global model
     try:
         with open('healthcare_fraud_detection_model.pkl', 'rb') as file:
             model = pickle.load(file)
-        print("Model loaded successfully")
+        print("✅ Model loaded successfully")
         return True
     except Exception as e:
-        print(f"Error loading model: {e}")
+        print(f"❌ Error loading model: {e}")
         return False
 
 # Load the model at startup
@@ -37,7 +36,7 @@ def predict():
         # Check if model is loaded
         if model is None:
             if not load_model():
-                return jsonify({"error": "Model could not be load ed"}), 500
+                return jsonify({"error": "Model could not be loaded"}), 500
 
         # Get JSON data from request
         request_data = request.json
@@ -78,7 +77,7 @@ def predict():
         # Make prediction
         prediction = model.predict(input_data)
         prediction_proba = model.predict_proba(input_data)[:, 1].tolist()
-        print(prediction)
+
         # Return the prediction result
         return jsonify({
             "prediction": int(prediction[0]),
@@ -95,5 +94,5 @@ def hello_world():
     return "Fraud Detection API"
 
 if __name__ == "__main__":
-    print("Starting Fraud Detection API server")
+    print("🚀 Starting Fraud Detection API server")
     app.run(host='0.0.0.0', port=5000, debug=True)
